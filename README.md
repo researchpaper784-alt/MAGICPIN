@@ -149,17 +149,43 @@ follow-up framing triggered by a repeat topic.
 ## Deployment
 
 The submission requires **one public base URL** exposing all five
-endpoints. Containerize with the included `Dockerfile` and deploy to any
-cloud provider (Render, Railway, Fly.io, a VM, etc.):
+endpoints. This repo ships ready-made configs so any of the following is a
+few clicks, no Dockerfile editing needed:
 
+**Render (recommended — free tier, auto-detects `render.yaml`)**
+1. https://dashboard.render.com/ → New → Blueprint.
+2. Connect GitHub, pick `researchpaper784-alt/MAGICPIN`, branch
+   `claude/stoic-wozniak-2740zw`.
+3. Render reads `render.yaml`, builds the `Dockerfile`, and deploys.
+4. Copy the resulting `https://vera-bot-xxxx.onrender.com` URL.
+
+**Railway (auto-detects `Procfile`)**
+1. https://railway.app/new → Deploy from GitHub repo → same repo/branch.
+2. Railway installs `requirements.txt` and runs the `Procfile`'s `web` command.
+3. Settings → Networking → Generate Domain for the public URL.
+
+**Fly.io (uses `fly.toml`)**
 ```bash
-docker build -t vera-bot .
-docker run -p 8000:8000 vera-bot
+fly launch --no-deploy   # picks up fly.toml, keep the generated app name or edit it
+fly deploy
 ```
 
-Point the challenge's submission form's **Submission URL** field at the
-deployed base URL (e.g. `https://your-bot.example.com`) — this repository
-does not itself host a public endpoint.
+**Any VM / your own server**
+```bash
+docker build -t vera-bot .
+docker run -d -p 8000:8000 vera-bot
+```
+
+Then verify the live deployment before submitting:
+
+```bash
+BASE_URL=https://your-bot.example.com ./scripts/smoke_test.sh
+```
+
+This hits all 5 endpoints in sequence (health → metadata → context ×3 →
+tick → reply) and fails loudly if any response isn't `200`. Only once this
+passes should the URL go into the challenge's submission form's
+**Submission URL** field.
 
 ## Competition requirements checklist
 
