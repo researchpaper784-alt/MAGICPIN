@@ -1,0 +1,14 @@
+{
+  "category": "restaurants",
+  "voice": {
+    "tone": "sensory, urgent, appetite-driven",
+    "avoid": [
+      "clinical language",
+      "overpromising taste claims",
+      "generic greetings"
+    ]
+  },
+  "offer_patterns": ["happy_hour", "weekday_lunch_deal", "weekend_combo"],
+  "seasonal_moments": ["festival_menu", "monsoon_comfort_food", "ipl_season"],
+  "benchmark_phrase": "people around you searched for"
+}

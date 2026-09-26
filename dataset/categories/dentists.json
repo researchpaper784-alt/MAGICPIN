@@ -1,0 +1,15 @@
+{
+  "category": "dentists",
+  "voice": {
+    "tone": "clinical, reassuring, precise",
+    "avoid": [
+      "casual slang",
+      "unverified medical claims",
+      "fear-based language",
+      "emojis"
+    ]
+  },
+  "offer_patterns": ["checkup_discount", "new_patient_special", "family_bundle"],
+  "seasonal_moments": ["new_year_checkup", "back_to_school", "winter_sensitivity"],
+  "benchmark_phrase": "people in your locality are searching for"
+}

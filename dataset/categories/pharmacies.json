@@ -1,0 +1,14 @@
+{
+  "category": "pharmacies",
+  "voice": {
+    "tone": "practical, trustworthy, utility-first",
+    "avoid": [
+      "unverified medical claims",
+      "promotional excitement about medicine",
+      "casual slang"
+    ]
+  },
+  "offer_patterns": ["essentials_discount", "subscription_refill", "wellness_bundle"],
+  "seasonal_moments": ["flu_season", "monsoon_health", "summer_hydration"],
+  "benchmark_phrase": "people in your locality are searching for"
+}

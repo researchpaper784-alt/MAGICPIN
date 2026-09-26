@@ -1,0 +1,17 @@
+[
+  { "customer_id": "c_001", "merchant_id": "m_001_dmeera", "relationship": "returning", "consent": true, "status": "active", "preference": "morning_slots", "last_visit_days_ago": 190 },
+  { "customer_id": "c_002", "merchant_id": "m_001_dmeera", "relationship": "new", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": null },
+  { "customer_id": "c_003", "merchant_id": "m_002_smile", "relationship": "dormant", "consent": true, "status": "active", "preference": "evening_slots", "last_visit_days_ago": 365 },
+  { "customer_id": "c_004", "merchant_id": "m_002_smile", "relationship": "returning", "consent": false, "status": "active", "preference": "no_preference", "last_visit_days_ago": 45 },
+  { "customer_id": "c_005", "merchant_id": "m_003_glow", "relationship": "returning", "consent": true, "status": "active", "preference": "weekend_slots", "last_visit_days_ago": 20 },
+  { "customer_id": "c_006", "merchant_id": "m_003_glow", "relationship": "new", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": null },
+  { "customer_id": "c_007", "merchant_id": "m_004_urban", "relationship": "dormant", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": 120 },
+  { "customer_id": "c_008", "merchant_id": "m_005_spice", "relationship": "returning", "consent": true, "status": "active", "preference": "lunch", "last_visit_days_ago": 7 },
+  { "customer_id": "c_009", "merchant_id": "m_005_spice", "relationship": "new", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": null },
+  { "customer_id": "c_010", "merchant_id": "m_006_grill", "relationship": "dormant", "consent": true, "status": "inactive", "preference": "dinner", "last_visit_days_ago": 200 },
+  { "customer_id": "c_011", "merchant_id": "m_007_flex", "relationship": "returning", "consent": true, "status": "active", "preference": "morning_slots", "last_visit_days_ago": 3 },
+  { "customer_id": "c_012", "merchant_id": "m_007_flex", "relationship": "new", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": null },
+  { "customer_id": "c_013", "merchant_id": "m_008_iron", "relationship": "dormant", "consent": true, "status": "active", "preference": "evening_slots", "last_visit_days_ago": 90 },
+  { "customer_id": "c_014", "merchant_id": "m_009_care", "relationship": "returning", "consent": true, "status": "active", "preference": "no_preference", "last_visit_days_ago": 30 },
+  { "customer_id": "c_015", "merchant_id": "m_010_wellness", "relationship": "returning", "consent": false, "status": "active", "preference": "no_preference", "last_visit_days_ago": 60 }
+]

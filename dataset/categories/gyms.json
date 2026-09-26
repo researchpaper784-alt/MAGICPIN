@@ -1,0 +1,14 @@
+{
+  "category": "gyms",
+  "voice": {
+    "tone": "motivational, results-driven, direct",
+    "avoid": [
+      "clinical language",
+      "unverified transformation claims",
+      "shaming language"
+    ]
+  },
+  "offer_patterns": ["trial_pass", "annual_lockin", "referral_bonus"],
+  "seasonal_moments": ["new_year_resolution", "summer_body", "post_festival_reset"],
+  "benchmark_phrase": "people nearby searched for"
+}

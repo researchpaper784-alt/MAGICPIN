@@ -1,0 +1,14 @@
+{
+  "category": "salons",
+  "voice": {
+    "tone": "trendy, warm, image-conscious",
+    "avoid": [
+      "clinical language",
+      "unverified before/after claims",
+      "pushy urgency"
+    ]
+  },
+  "offer_patterns": ["weekday_special", "combo_package", "membership_upsell"],
+  "seasonal_moments": ["wedding_season", "festival_makeover", "monsoon_haircare"],
+  "benchmark_phrase": "people nearby searched for"
+}

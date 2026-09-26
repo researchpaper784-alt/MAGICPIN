@@ -1,0 +1,102 @@
+[
+  {
+    "merchant_id": "m_001_dmeera",
+    "name": "Dr. Meera's Dental Clinic",
+    "category": "dentists",
+    "identity": { "persona_name": "Vera, on behalf of Dr. Meera's Dental Clinic" },
+    "performance": { "footfall_trend_pct": 4, "avg_rating": 4.6, "bookings_last_7d": 22 },
+    "offers": [
+      { "offer_id": "o_checkup_299", "label": "discounted check up", "price_inr": 299, "tags": ["checkup_discount", "new_patient_special"] }
+    ]
+  },
+  {
+    "merchant_id": "m_002_smile",
+    "name": "Smile Studio Dental",
+    "category": "dentists",
+    "identity": { "persona_name": "Vera, on behalf of Smile Studio Dental" },
+    "performance": { "footfall_trend_pct": -6, "avg_rating": 4.3, "bookings_last_7d": 11 },
+    "offers": [
+      { "offer_id": "o_family_bundle", "label": "family checkup bundle", "price_inr": 899, "tags": ["family_bundle"] }
+    ]
+  },
+  {
+    "merchant_id": "m_003_glow",
+    "name": "Glow Unisex Salon",
+    "category": "salons",
+    "identity": { "persona_name": "Vera, on behalf of Glow Unisex Salon" },
+    "performance": { "footfall_trend_pct": 12, "avg_rating": 4.5, "bookings_last_7d": 40 },
+    "offers": [
+      { "offer_id": "o_weekday_special", "label": "weekday haircut + spa combo", "price_inr": 799, "tags": ["weekday_special", "combo_package"] }
+    ]
+  },
+  {
+    "merchant_id": "m_004_urban",
+    "name": "Urban Trim Salon",
+    "category": "salons",
+    "identity": { "persona_name": "Vera, on behalf of Urban Trim Salon" },
+    "performance": { "footfall_trend_pct": -3, "avg_rating": 4.1, "bookings_last_7d": 18 },
+    "offers": [
+      { "offer_id": "o_membership", "label": "monthly grooming membership", "price_inr": 1499, "tags": ["membership_upsell"] }
+    ]
+  },
+  {
+    "merchant_id": "m_005_spice",
+    "name": "Spice Route Kitchen",
+    "category": "restaurants",
+    "identity": { "persona_name": "Vera, on behalf of Spice Route Kitchen" },
+    "performance": { "footfall_trend_pct": 8, "avg_rating": 4.4, "bookings_last_7d": 65 },
+    "offers": [
+      { "offer_id": "o_lunch_deal", "label": "weekday lunch thali", "price_inr": 199, "tags": ["weekday_lunch_deal"] }
+    ]
+  },
+  {
+    "merchant_id": "m_006_grill",
+    "name": "The Grill House",
+    "category": "restaurants",
+    "identity": { "persona_name": "Vera, on behalf of The Grill House" },
+    "performance": { "footfall_trend_pct": -10, "avg_rating": 4.2, "bookings_last_7d": 30 },
+    "offers": [
+      { "offer_id": "o_happy_hour", "label": "happy hour combo", "price_inr": 499, "tags": ["happy_hour"] }
+    ]
+  },
+  {
+    "merchant_id": "m_007_flex",
+    "name": "FlexFit Gym",
+    "category": "gyms",
+    "identity": { "persona_name": "Vera, on behalf of FlexFit Gym" },
+    "performance": { "footfall_trend_pct": 15, "avg_rating": 4.7, "bookings_last_7d": 50 },
+    "offers": [
+      { "offer_id": "o_trial_pass", "label": "7-day trial pass", "price_inr": 99, "tags": ["trial_pass"] }
+    ]
+  },
+  {
+    "merchant_id": "m_008_iron",
+    "name": "Iron Temple Fitness",
+    "category": "gyms",
+    "identity": { "persona_name": "Vera, on behalf of Iron Temple Fitness" },
+    "performance": { "footfall_trend_pct": -8, "avg_rating": 4.0, "bookings_last_7d": 20 },
+    "offers": [
+      { "offer_id": "o_annual_lockin", "label": "annual membership lock-in", "price_inr": 8999, "tags": ["annual_lockin"] }
+    ]
+  },
+  {
+    "merchant_id": "m_009_care",
+    "name": "CarePlus Pharmacy",
+    "category": "pharmacies",
+    "identity": { "persona_name": "Vera, on behalf of CarePlus Pharmacy" },
+    "performance": { "footfall_trend_pct": 5, "avg_rating": 4.5, "bookings_last_7d": 90 },
+    "offers": [
+      { "offer_id": "o_essentials", "label": "essentials discount bundle", "price_inr": 349, "tags": ["essentials_discount"] }
+    ]
+  },
+  {
+    "merchant_id": "m_010_wellness",
+    "name": "Wellness Point Pharmacy",
+    "category": "pharmacies",
+    "identity": { "persona_name": "Vera, on behalf of Wellness Point Pharmacy" },
+    "performance": { "footfall_trend_pct": -4, "avg_rating": 4.2, "bookings_last_7d": 55 },
+    "offers": [
+      { "offer_id": "o_subscription_refill", "label": "monthly refill subscription", "price_inr": 599, "tags": ["subscription_refill"] }
+    ]
+  }
+]
