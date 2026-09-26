@@ -21,6 +21,8 @@ class Store:
         self._suppressed: dict[str, float] = {}
         # merchant_id -> most recent pending action (awaiting reply)
         self._pending: dict[str, dict[str, Any]] = {}
+        # merchant_id -> list of {"suppression_key", "topic_key"} already sent
+        self._sent_history: dict[str, list[dict[str, str]]] = {}
         self._tick_count = 0
 
     def upsert_context(self, scope: str, context_id: str, version: int, payload: dict, delivered_at: str) -> dict:
@@ -65,6 +67,16 @@ class Store:
         with self._lock:
             self._tick_count += 1
             return self._tick_count
+
+    def record_sent(self, merchant_id: str, suppression_key: str, topic_key: str) -> None:
+        with self._lock:
+            self._sent_history.setdefault(merchant_id, []).append(
+                {"suppression_key": suppression_key, "topic_key": topic_key}
+            )
+
+    def get_sent_history(self, merchant_id: str) -> list[dict[str, str]]:
+        with self._lock:
+            return list(self._sent_history.get(merchant_id, []))
 
 
 store = Store()

@@ -1,23 +1,39 @@
 from __future__ import annotations
 
-import time
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.compose import compose
 from app.intent import classify_intent, compose_reply
 from app.store import store
 
+MAX_PAYLOAD_BYTES = 500 * 1024  # 500 KB context cap
+TICK_ACTION_CAP = 20  # actions per tick cap
+
 app = FastAPI(title="Vera Bot", version="1.0.0")
 
-TICK_ACTION_CAP = 20
+
+class PayloadCapMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length is not None and int(content_length) > MAX_PAYLOAD_BYTES:
+            return JSONResponse(
+                {"error": "payload_too_large", "max_bytes": MAX_PAYLOAD_BYTES},
+                status_code=413,
+            )
+        return await call_next(request)
+
+
+app.add_middleware(PayloadCapMiddleware)
 
 
 class ContextRequest(BaseModel):
-    scope: str
+    scope: Literal["category", "merchant", "customer", "trigger", "digest"]
     context_id: str
     version: int
     payload: dict[str, Any]
@@ -59,7 +75,12 @@ def metadata() -> dict:
             "GET /v1/healthz",
             "GET /v1/metadata",
         ],
-        "tick_action_cap": TICK_ACTION_CAP,
+        "scopes": ["category", "merchant", "customer", "trigger", "digest"],
+        "limits": {
+            "tick_action_cap": TICK_ACTION_CAP,
+            "max_payload_bytes": MAX_PAYLOAD_BYTES,
+            "response_timeout_seconds": 30,
+        },
     }
 
 
@@ -74,6 +95,28 @@ def _resolve_category(merchant_payload: dict) -> Optional[dict]:
     category_name = merchant_payload.get("category")
     entry = store.get_context("category", category_name) if category_name else None
     return entry["payload"] if entry else None
+
+
+def _apply_digest(merchant: dict, merchant_id: str) -> dict:
+    """Merge a mid-test digest update (fresh offers/metric shifts pushed via
+    scope="digest", keyed by merchant_id) on top of the base merchant context."""
+    digest_entry = store.get_context("digest", merchant_id)
+    if not digest_entry:
+        return merchant
+    merged = dict(merchant)
+    digest_payload = digest_entry["payload"]
+    for key in ("performance", "offers", "identity"):
+        if key in digest_payload:
+            merged[key] = digest_payload[key]
+    return merged
+
+
+def _with_conversation_history(merchant: dict, merchant_id: str) -> dict:
+    merged = dict(merchant)
+    merged["conversation_history"] = list(merchant.get("conversation_history") or []) + store.get_sent_history(
+        merchant_id
+    )
+    return merged
 
 
 @app.post("/v1/tick")
@@ -91,7 +134,8 @@ def post_tick(req: TickRequest) -> dict:
         merchant_entry = merchants.get(merchant_id)
         if merchant_entry is None:
             continue
-        merchant = merchant_entry["payload"]
+        merchant = _apply_digest(merchant_entry["payload"], merchant_id)
+        merchant = _with_conversation_history(merchant, merchant_id)
         category = _resolve_category(merchant)
         if category is None:
             continue
@@ -110,7 +154,14 @@ def post_tick(req: TickRequest) -> dict:
 
         store.suppress(composed["suppression_key"])
         store.set_pending(merchant_id, composed)
-        actions.append({"merchant_id": merchant_id, "customer_id": customer_id, **composed})
+        store.record_sent(merchant_id, composed["suppression_key"], composed["topic_key"])
+        actions.append(
+            {
+                "merchant_id": merchant_id,
+                "customer_id": customer_id,
+                **{k: v for k, v in composed.items() if k != "topic_key"},
+            }
+        )
 
     return {"tick_id": req.tick_id or f"tick_{tick_no}", "actions": actions, "count": len(actions)}
 
@@ -118,8 +169,11 @@ def post_tick(req: TickRequest) -> dict:
 @app.post("/v1/reply")
 def post_reply(req: ReplyRequest) -> dict:
     prior_action = store.get_pending(req.merchant_id) or {}
+    merchant_entry = store.get_context("merchant", req.merchant_id)
+    merchant = _apply_digest(merchant_entry["payload"], req.merchant_id) if merchant_entry else None
+
     intent = classify_intent(req.message)
-    result = compose_reply(intent, prior_action)
+    result = compose_reply(intent, prior_action, merchant)
 
     if result.get("resolved") or result.get("suppress_cooldown"):
         store.clear_pending(req.merchant_id)

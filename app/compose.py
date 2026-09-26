@@ -53,13 +53,16 @@ def _benchmark_fact(category: dict, trigger: dict) -> str:
     return "There's a fresh signal worth acting on"
 
 
-def _suppression_key(merchant: dict, trigger: dict, category: dict, offer: Optional[dict]) -> str:
+def _suppression_key(
+    merchant: dict, trigger: dict, category: dict, offer: Optional[dict], customer: Optional[dict]
+) -> str:
     raw = "|".join(
         [
             merchant.get("merchant_id", ""),
             trigger.get("trigger_id", ""),
             category.get("category", ""),
             offer.get("offer_id", "none") if offer else "none",
+            customer.get("customer_id", "") if customer else "",
         ]
     )
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
@@ -68,6 +71,43 @@ def _suppression_key(merchant: dict, trigger: dict, category: dict, offer: Optio
 def _send_as(merchant: dict, customer: Optional[dict]) -> str:
     persona = merchant.get("identity", {}).get("persona_name")
     return persona or DEFAULT_SEND_AS
+
+
+def _proof_point(merchant: dict, trigger: dict) -> str:
+    """A trust-building fact drawn from merchant performance, used only where
+    it strengthens the case (research/recall) so messages stay concise elsewhere."""
+    if trigger.get("type") not in ("research", "recall"):
+        return ""
+    rating = merchant.get("performance", {}).get("avg_rating")
+    if rating and rating >= 4.5:
+        return f" You're rated {rating}★ by customers."
+    return ""
+
+
+def _topic_key(merchant: dict, category: dict, offer: Optional[dict], customer: Optional[dict]) -> str:
+    """Identifies a merchant/offer/customer combination independent of which
+    trigger fired it, so a fresh trigger about the same underlying offer is
+    still recognized as a follow-up rather than a cold open."""
+    raw = "|".join(
+        [
+            merchant.get("merchant_id", ""),
+            category.get("category", ""),
+            offer.get("offer_id", "none") if offer else "none",
+            customer.get("customer_id", "") if customer else "",
+        ]
+    )
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def _history_prefix(merchant: dict, topic_key: str) -> str:
+    """Prior conversation behavior is part of the rubric's personalization
+    dimension: a merchant/offer/customer combination already touched once
+    gets a follow-up framing instead of a cold open."""
+    history = merchant.get("conversation_history") or []
+    prior_topics = {h.get("topic_key") for h in history if isinstance(h, dict)}
+    if topic_key in prior_topics:
+        return "Following up — "
+    return ""
 
 
 def compose(
@@ -85,6 +125,8 @@ def compose(
 
     offer = _pick_offer(merchant, category, trigger)
     fact = _benchmark_fact(category, trigger)
+    suppression_key = _suppression_key(merchant, trigger, category, offer, customer)
+    topic_key = _topic_key(merchant, category, offer, customer)
 
     if offer:
         offer_clause = f"Should I send them {offer['label']} at ₹{offer['price_inr']}?"
@@ -102,7 +144,9 @@ def compose(
 
     offer_clause = offer_clause.replace("them", subject, 1) if offer else offer_clause
 
-    message = f"{fact}. {offer_clause}"
+    prefix = _history_prefix(merchant, topic_key)
+    proof = _proof_point(merchant, trigger)
+    message = f"{prefix}{fact}.{proof} {offer_clause}".replace("  ", " ")
     cta = "Send now?" if offer else "Reach out now?"
 
     rationale_bits = [f"trigger={trigger.get('type')}", f"category={category.get('category')}"]
@@ -110,12 +154,16 @@ def compose(
         rationale_bits.append(f"offer={offer['offer_id']}")
     if customer is not None:
         rationale_bits.append(f"customer_relationship={customer.get('relationship')}")
+    if prefix:
+        rationale_bits.append("prior_touch=true")
     rationale = "Grounded in " + ", ".join(rationale_bits) + "."
 
     return {
         "message": message,
         "cta": cta,
         "send_as": _send_as(merchant, customer),
-        "suppression_key": _suppression_key(merchant, trigger, category, offer),
+        "suppression_key": suppression_key,
+        "topic_key": topic_key,
+        "offer_id": offer.get("offer_id") if offer else None,
         "rationale": rationale,
     }
